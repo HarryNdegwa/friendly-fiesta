@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
+
 const userRoutes = require("./routes/users");
+const carRoutes = require("./routes/cars");
 const db = require("./models/index");
 
 const app = express();
@@ -13,6 +15,7 @@ const app = express();
 // });
 
 db.sequelize.sync({ force: true });
+
 // parse requests of content-type - application/json
 app.use(express.json());
 
@@ -20,6 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/user", userRoutes);
+app.use("/cars", carRoutes);
 
 const PORT = process.env.PORT || 3000;
 
