@@ -7,7 +7,8 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setQid(state, action) {
-      state.qid = action.token;
+      console.log(`action`, action.payload);
+      state.qid = action.payload;
     },
     unSetQid(state) {
       state.qid = "";
