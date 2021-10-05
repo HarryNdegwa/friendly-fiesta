@@ -1,5 +1,8 @@
 const cloudinary = require("cloudinary").v2;
 const streamifier = require("streamifier");
+const db = require("../models");
+
+const Car = db.Car;
 
 const {
   CLOUDINARY_API_KEY,
@@ -40,5 +43,22 @@ exports.uploadFile = async (req, res) => {
   } catch (error) {
     console.log(`error`, error);
     res.status(400).send("Something is wrong");
+  }
+};
+
+exports.addCar = async (req, res) => {
+  try {
+    const data = req.body;
+
+    const payload = { ...data, UserId: req.userId };
+
+    await Car.create({
+      ...payload,
+    });
+
+    res.status(200).send("Ok");
+  } catch (error) {
+    console.log(`error`, error);
+    res.status(400).send("Bad request!");
   }
 };

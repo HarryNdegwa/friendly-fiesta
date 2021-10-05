@@ -2,10 +2,6 @@
 const { Model } = require("sequelize");
 const db = require("./index");
 
-const User = db.User;
-
-console.log(`User`, User);
-
 module.exports = (sequelize, DataTypes) => {
   class Car extends Model {
     /**
