@@ -25,3 +25,7 @@
 .nav-links div {
   margin-right: 3rem;
 }
+
+input {
+  background-color: white !important;
+}

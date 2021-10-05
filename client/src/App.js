@@ -4,6 +4,9 @@ import { Switch, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import AddEntry from "./pages/AddEntry";
+import UpdateEntry from "./pages/UpdateEntry";
+import Chats from "./pages/Chats";
 
 export default function App() {
   return (
@@ -13,6 +16,9 @@ export default function App() {
         <Route path="/" exact component={Home} />
         <Route path="/register" exact component={Register} />
         <Route path="/login" component={Login} />
+        <Route path="/add-entry" component={AddEntry} />
+        <Route path="/update-entry" component={UpdateEntry} />
+        <Route path="/chats" component={Chats} />
       </Switch>
     </div>
   );
