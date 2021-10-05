@@ -81,3 +81,44 @@ exports.updateCar = async (req, res) => {
     res.status(400).send("Bad request!");
   }
 };
+
+exports.getCars = async (req, res) => {
+  try {
+    let cars;
+
+    if (!req.userId) {
+      cars = await Car.findAll({
+        attributes: { exclude: ["location"] },
+      });
+    } else {
+      cars = await Car.findAll();
+    }
+
+    res.status(200).send(cars);
+  } catch (error) {
+    console.log(`error`, error);
+    res.status(400).send("Bad request!");
+  }
+};
+
+exports.getCar = async (req, res) => {
+  try {
+    let car;
+
+    if (!req.userId) {
+      car = await Car.findOne({
+        attributes: { exclude: ["location"] },
+        where: { id: req.params.id },
+      });
+    } else {
+      car = await Car.findOne({ where: { id: req.params.id } });
+    }
+
+    car.images = car.images.slice(0, 2);
+
+    res.status(200).send(car);
+  } catch (error) {
+    console.log(`error`, error);
+    res.status(400).send("Bad request!");
+  }
+};
