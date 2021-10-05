@@ -30,11 +30,11 @@ router.put(
   }
 );
 
-router.get("/", [verifyToken], async (req, res) => {
+router.get("/cars", [verifyToken], async (req, res) => {
   await getCars(req, res);
 });
 
-router.get("/:id", [verifyToken], async (req, res) => {
+router.get("/car/:id", [verifyToken], async (req, res) => {
   await getCar(req, res);
 });
 

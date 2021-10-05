@@ -2,8 +2,6 @@ const jwt = require("jsonwebtoken");
 const { SECRET_KEY } = require("../constants");
 
 module.exports = (req, res, next) => {
-  console.log(`req`, req);
-
   try {
     const rawToken = req.headers["authorization"]; // Bearer .....
 
@@ -19,7 +17,10 @@ module.exports = (req, res, next) => {
         next();
       });
     } else {
-      if (req.baseUrl === "/cars") {
+      if (
+        req.originalUrl === "/v1/cars" ||
+        req.originalUrl.includes("/v1/car")
+      ) {
         req.userId = null;
         next();
       } else {

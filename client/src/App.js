@@ -17,8 +17,8 @@ export default function App() {
         <Route path="/" exact component={Home} />
         <Route path="/register" exact component={Register} />
         <Route path="/login" component={Login} />
-        <Route path="/add-entry" component={AddEntry} />
-        <Route path="/update-entry" component={UpdateEntry} />
+        <Route path="/add-car" component={AddEntry} />
+        <Route path="/update-car/:id" component={UpdateEntry} />
         <Route path="/chats" component={Chats} />
         <Route path="/car/:id" component={Car} />
       </Switch>

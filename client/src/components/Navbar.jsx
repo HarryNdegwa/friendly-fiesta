@@ -35,8 +35,8 @@ export default function Navbar() {
                 </Link>
               </div>
               <div>
-                <Link to="/add-entry" className="custom-link">
-                  Add Entry
+                <Link to="/add-car" className="custom-link">
+                  Add Car
                 </Link>
               </div>
               <div>

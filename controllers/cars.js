@@ -114,7 +114,9 @@ exports.getCar = async (req, res) => {
       car = await Car.findOne({ where: { id: req.params.id } });
     }
 
-    car.images = car.images.slice(0, 2);
+    if (car) {
+      car.images = car.images.slice(0, 2);
+    }
 
     res.status(200).send(car);
   } catch (error) {
