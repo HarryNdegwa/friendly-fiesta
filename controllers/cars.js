@@ -62,3 +62,22 @@ exports.addCar = async (req, res) => {
     res.status(400).send("Bad request!");
   }
 };
+
+exports.updateCar = async (req, res) => {
+  try {
+    const data = req.body;
+
+    const payload = { ...data };
+
+    await Car.update(payload, {
+      where: {
+        id: req.carID,
+      },
+    });
+
+    res.status(200).send("Ok");
+  } catch (error) {
+    console.log(`error`, error);
+    res.status(400).send("Bad request!");
+  }
+};
