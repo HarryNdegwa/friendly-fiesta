@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import AddEntry from "./pages/AddEntry";
 import UpdateEntry from "./pages/UpdateEntry";
 import Chats from "./pages/Chats";
+import Car from "./pages/Car";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/add-entry" component={AddEntry} />
         <Route path="/update-entry" component={UpdateEntry} />
         <Route path="/chats" component={Chats} />
+        <Route path="/car/:id" component={Car} />
       </Switch>
     </div>
   );
