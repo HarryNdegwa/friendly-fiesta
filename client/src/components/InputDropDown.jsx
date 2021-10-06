@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { createNewChat } from "../redux/reducers/api/auth";
 
-export default function InputDropDown({ data, setData }) {
+export default function InputDropDown({
+  data,
+  setData,
+  setChatUsers,
+  chatUsers,
+}) {
   const [showDropDown, setShowDropDown] = useState(false);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-
-  console.log(`data`, data);
 
   const handleChange = (e) => {
     setShowDropDown(true);
@@ -27,7 +30,9 @@ export default function InputDropDown({ data, setData }) {
 
     const response = await dispatch(createNewChat(id));
     console.log(`response`, response);
+
     if (response) {
+      setChatUsers([response, ...chatUsers]);
       let tempData = data.filter((d) => d.id !== id);
       setData([...tempData]);
     }

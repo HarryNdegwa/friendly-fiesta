@@ -26,6 +26,22 @@ export const login = (data) => async (dispatch) => {
   }
 };
 
+export const getMe = () => async (_, getState) => {
+  try {
+    const token = getState().auth.qid;
+
+    let config = authConfig(token);
+
+    const response = await axios.get("/me", {
+      headers: { ...config },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log(`error`, error.message);
+  }
+};
+
 export const getNewChatUsers = () => async (_, getState) => {
   try {
     const token = getState().auth.qid;
@@ -71,6 +87,8 @@ export const createNewChat = (id) => async (_, getState) => {
         headers: { ...config },
       }
     );
+
+    console.log(`response`, response);
 
     return response.data;
   } catch (error) {

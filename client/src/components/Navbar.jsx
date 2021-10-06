@@ -1,10 +1,13 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { unSetQid } from "../redux/reducers/auth";
 
 export default function Navbar() {
   const location = useLocation();
+
+  const dispatch = useDispatch();
 
   const { qid: token } = useSelector((state) => state.auth);
 
@@ -40,7 +43,14 @@ export default function Navbar() {
                 </Link>
               </div>
               <div>
-                <span className="custom-link cursor-pointer">Logout</span>
+                <span
+                  className="custom-link cursor-pointer"
+                  onClick={async () => {
+                    await dispatch(unSetQid());
+                  }}
+                >
+                  Logout
+                </span>
               </div>
             </>
           ) : (
