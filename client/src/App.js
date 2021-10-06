@@ -8,6 +8,7 @@ import AddEntry from "./pages/AddEntry";
 import UpdateEntry from "./pages/UpdateEntry";
 import Chats from "./pages/Chats";
 import Car from "./pages/Car";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 export default function App() {
   return (
@@ -17,9 +18,9 @@ export default function App() {
         <Route path="/" exact component={Home} />
         <Route path="/register" exact component={Register} />
         <Route path="/login" component={Login} />
-        <Route path="/add-car" component={AddEntry} />
-        <Route path="/update-car/:id" component={UpdateEntry} />
-        <Route path="/chats" component={Chats} />
+        <ProtectedRoute path="/add-car" component={AddEntry} />
+        <ProtectedRoute path="/update-car/:id" component={UpdateEntry} />
+        <ProtectedRoute path="/chats" component={Chats} />
         <Route path="/car/:id" component={Car} />
       </Switch>
     </div>

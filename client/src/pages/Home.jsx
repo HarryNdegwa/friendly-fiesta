@@ -19,10 +19,12 @@ export default function Home() {
 
   return (
     <div className="container">
-      <h3>Home</h3>
-      {cars.map((car) => (
-        <CarCard data={car} key={car.id} />
-      ))}
+      <h3>Cars</h3>
+      <div className="row">
+        {cars.map((car) => (
+          <CarCard data={car} key={car.id} />
+        ))}
+      </div>
     </div>
   );
 }

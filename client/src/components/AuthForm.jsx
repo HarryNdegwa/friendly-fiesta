@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router";
+import { useHistory, useLocation } from "react-router";
 import { login, register } from "../redux/reducers/api/auth";
 
 export default function AuthForm({ text, values, setValues }) {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
+
   const handleChange = (e) => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
@@ -20,7 +22,11 @@ export default function AuthForm({ text, values, setValues }) {
       await dispatch(register(values));
     }
     setLoading(false);
-    history.push("/");
+    if (location && location.state && location.state.toRedirectTo) {
+      history.push(location.state.toRedirectTo);
+    } else {
+      history.push("/");
+    }
   };
 
   return (

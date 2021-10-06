@@ -66,7 +66,7 @@ export default function EntryForm({ edit, data, carId }) {
   };
 
   return (
-    <form className="col-md-5 mx-auto" onSubmit={handleSubmit}>
+    <form className="col-md-5 mx-auto mb-5" onSubmit={handleSubmit}>
       <div className="mb-3 row">
         <label htmlFor="name" className="col-form-label">
           Car Name
@@ -161,6 +161,7 @@ export default function EntryForm({ edit, data, carId }) {
         />
         <small>Maximum of 6 images</small>
       </div>
+      <div></div>
       <div className="d-grid gap-2">
         <button
           className="btn btn-secondary"

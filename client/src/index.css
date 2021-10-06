@@ -73,3 +73,8 @@ textarea {
   background-color: #fff;
   z-index: 2;
 }
+
+.carousel-img {
+  height: 52vh;
+  object-fit: cover;
+}
