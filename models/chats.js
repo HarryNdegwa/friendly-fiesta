@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.ChatInfo);
+      // this.belongsTo(models.ChatInfo);
     }
   }
   Chat.init(
@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       message: DataTypes.TEXT,
       chatId: DataTypes.STRING,
       senderId: DataTypes.INTEGER,
+      read: { defaultValue: false, type: DataTypes.BOOLEAN },
     },
     {
       sequelize,
