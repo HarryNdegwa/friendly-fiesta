@@ -37,3 +37,26 @@ input {
 .car-list-link {
   text-decoration: none !important;
 }
+
+.height40px {
+  height: 40px;
+}
+
+.chat-message-wrapper {
+  min-width: 100px;
+  max-width: 70%;
+}
+
+.chats-profile-wrapper {
+  height: 63vh;
+  overflow-y: scroll;
+}
+
+.messages-wrapper {
+  height: 53vh;
+  overflow-y: scroll;
+}
+
+textarea {
+  resize: none !important;
+}
