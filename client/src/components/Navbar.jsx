@@ -1,11 +1,12 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import { unSetQid } from "../redux/reducers/auth";
 
 export default function Navbar() {
   const location = useLocation();
+  const history = useHistory();
 
   const dispatch = useDispatch();
 
@@ -47,6 +48,7 @@ export default function Navbar() {
                   className="custom-link cursor-pointer"
                   onClick={async () => {
                     await dispatch(unSetQid());
+                    history.push("/");
                   }}
                 >
                   Logout
