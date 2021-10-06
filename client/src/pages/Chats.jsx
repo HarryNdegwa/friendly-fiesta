@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
-import { data } from "../chatData";
 import ChatProfileCard from "../components/ChatProfileCard";
 import MessageCard from "../components/MessageCard";
 import { useDispatch } from "react-redux";
@@ -25,13 +24,34 @@ export default function Chats() {
   const [activeProfileId, setActiveProfileId] = useState(null);
   const [activeProfileData, setActiveProfileData] = useState(null);
   const [me, setMe] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState("");
+  const messagesBottomRef = useRef();
 
   useEffect(() => {
-    const socket = io(`http://${window.location.hostname}:3000`);
+    let socket = io(`http://${window.location.hostname}:3000`);
     setSocket(socket);
 
     return () => socket.close();
-  }, []);
+  }, [activeChatId]);
+
+  useEffect(() => {
+    if (activeChatId && socket) {
+      socket.emit("getMessages", { activeChatId });
+    }
+  }, [socket, activeChatId]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("messages", (messages) => {
+        setMessages((prevMessages) => [...prevMessages, ...messages]);
+      });
+
+      socket.on("message", (message) => {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      });
+    }
+  }, [socket]);
 
   useEffect(() => {
     const getData = async () => {
@@ -73,6 +93,27 @@ export default function Chats() {
       setActiveProfileData(chatUsers[activeProfileId]);
     }
   }, [activeProfileId, me]);
+
+  useEffect(() => {
+    if (messagesBottomRef && messagesBottomRef.current) {
+      messagesBottomRef.current.scrollIntoView({ block: "end" });
+    }
+  }, [messages]);
+
+  const handleChatInputChange = (e) => {
+    setMessage(e.target.value);
+  };
+
+  const handleSubmitMessage = (e) => {
+    e.preventDefault();
+    socket.emit("newMessage", {
+      chatId: activeChatId,
+      message,
+      senderId: me.id,
+      read: false,
+    });
+    setMessage("");
+  };
 
   // console.log(`activeChatId`, activeChatId);
 
@@ -133,6 +174,7 @@ export default function Chats() {
                         key={info.id}
                         setActiveProfileId={setActiveProfileId}
                         idx={idx}
+                        setMessages={setMessages}
                       />
                     ))}
                 </div>
@@ -144,23 +186,43 @@ export default function Chats() {
                   </p>
                 </div>
                 <div className="p-2 messages-wrapper">
-                  {data.map((chat) => (
-                    <MessageCard key={chat.id} data={chat} />
-                  ))}
+                  {messages && messages.length > 0 ? (
+                    messages &&
+                    messages.map((chat) => (
+                      <MessageCard
+                        key={chat.id}
+                        data={chat}
+                        me={me}
+                        messages={chat}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-center mt-5">No messages </p>
+                  )}
+                  <div ref={messagesBottomRef} />
                 </div>
                 <div>
-                  <div className="mb-3 row m-0 align-items-center">
+                  <form
+                    className="mb-3 row m-0 align-items-center"
+                    onSubmit={handleSubmitMessage}
+                  >
                     <div className="col-11">
                       <textarea
                         className="form-control"
                         id="exampleFormControlTextarea1"
                         rows="2"
+                        onChange={handleChatInputChange}
+                        value={message}
+                        required
+                        placeholder="Type message here..."
                       ></textarea>
                     </div>
                     <div className="col-1">
-                      <button className="btn">Send</button>
+                      <button className="btn" type="submit">
+                        Send
+                      </button>
                     </div>
-                  </div>
+                  </form>
                 </div>
               </div>
             </>
