@@ -21,7 +21,7 @@ export const getCars = () => async (_, getState) => {
       return response.data;
     }
   } catch (error) {
-    console.log(`error`, error);
+    console.log(`error`, error.message);
   }
 };
 

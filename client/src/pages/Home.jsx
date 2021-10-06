@@ -10,8 +10,9 @@ export default function Home() {
   useEffect(() => {
     const getData = async () => {
       let _cars = await dispatch(getCars());
-      console.log(`_cars`, _cars);
-      setCars([..._cars]);
+      if (_cars) {
+        setCars([..._cars]);
+      }
     };
     getData();
   }, [dispatch]);

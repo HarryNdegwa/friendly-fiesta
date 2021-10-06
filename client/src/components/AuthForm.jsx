@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
-import { register } from "../redux/reducers/api/auth";
+import { login, register } from "../redux/reducers/api/auth";
 
 export default function AuthForm({ text, values, setValues }) {
   const [loading, setLoading] = useState(false);
@@ -14,7 +14,11 @@ export default function AuthForm({ text, values, setValues }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await dispatch(register(values));
+    if (text === "Login") {
+      await dispatch(login(values));
+    } else {
+      await dispatch(register(values));
+    }
     setLoading(false);
     history.push("/");
   };

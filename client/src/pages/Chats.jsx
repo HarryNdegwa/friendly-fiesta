@@ -3,9 +3,16 @@ import { io } from "socket.io-client";
 import { data } from "../chatData";
 import ChatProfileCard from "../components/ChatProfileCard";
 import MessageCard from "../components/MessageCard";
+import { useDispatch } from "react-redux";
+import { getChatUsers, getNewChatUsers } from "../redux/reducers/api/auth";
+import InputDropDown from "../components/InputDropDown";
 
 export default function Chats() {
   const [socket, setSocket] = useState(null);
+  const dispatch = useDispatch();
+  const [newChatUsers, setNewChatUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [chatUsers, setChatUsers] = useState([]);
 
   useEffect(() => {
     const socket = io(`http://${window.location.hostname}:3000`);
@@ -13,6 +20,25 @@ export default function Chats() {
 
     return () => socket.close();
   }, []);
+
+  useEffect(() => {
+    const getData = async () => {
+      const response1 = await dispatch(getNewChatUsers());
+      if (response1 instanceof Array) {
+        setNewChatUsers([...response1]);
+      }
+
+      const response2 = await dispatch(getChatUsers());
+
+      if (response2 instanceof Array) {
+        setChatUsers([...response2]);
+      }
+
+      setLoading(false);
+    };
+
+    getData();
+  }, [dispatch]);
 
   const handleChange = () => {};
 
@@ -25,16 +51,7 @@ export default function Chats() {
           <div>
             <div>
               <div>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="username"
-                  required
-                  values={""}
-                  onChange={handleChange}
-                  name="username"
-                  placeholder="Start new chat..."
-                />
+                <InputDropDown data={newChatUsers} setData={setNewChatUsers} />
               </div>
             </div>
           </div>
@@ -57,12 +74,10 @@ export default function Chats() {
               </div>
             </div>
             <div className="chats-profile-wrapper">
-              <ChatProfileCard />
-              <ChatProfileCard />
-              <ChatProfileCard />
-              <ChatProfileCard />
-              <ChatProfileCard />
-              <ChatProfileCard />
+              {chatUsers &&
+                chatUsers.map((info) => (
+                  <ChatProfileCard data={info} key={info.id} />
+                ))}
             </div>
           </div>
           <div className="col-lg-8 p-0">

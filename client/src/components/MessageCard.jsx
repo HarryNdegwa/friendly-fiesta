@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function MessageCard({ data }) {
-  console.log(`data`, data);
+  // console.log(`data`, data);
   return (
     <div
       className={`d-flex mb-2 w-100 ${
