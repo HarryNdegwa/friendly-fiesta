@@ -6,18 +6,25 @@ const socketio = require("socket.io");
 const userRoutes = require("./routes/users");
 const carRoutes = require("./routes/cars");
 const db = require("./models/index");
+const sock = require("./util/sock");
 
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "*",
 };
 
 app.use(cors(corsOptions));
 
 const server = http.createServer(app);
 
-const io = socketio(server);
+const io = socketio(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+sock(io);
 
 // db.sequelize.sync({ force: true });
 db.sequelize.sync();
@@ -31,8 +38,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/v1", userRoutes);
 app.use("/v1", carRoutes);
 
-const PORT = process.env.PORT || 4000;
+const PORT = 3000;
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Listening to port ${PORT}...`);
 });
