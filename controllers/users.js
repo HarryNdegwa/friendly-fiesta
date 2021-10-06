@@ -1,11 +1,14 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { Op } = require("sequelize");
+const ShortUniqueId = require("short-unique-id");
 
 const { SECRET_KEY } = require("../constants");
 
 const db = require("../models");
 
 const User = db.User;
+const ChatInfo = db.ChatInfo;
 
 const generateToken = (user) => {
   return jwt.sign({ id: user.id }, SECRET_KEY, {
@@ -60,6 +63,129 @@ exports.login = async (req, res) => {
     res.status(200).send({
       token: generateToken(user),
     });
+  } catch (error) {
+    console.log(`error`, error);
+    res.status(400).send("Something is wrong!");
+  }
+};
+
+exports.getNewChatUsers = async (req, res) => {
+  try {
+    const user = await User.findOne({ where: { id: req.userId } });
+    if (user) {
+      let newUsers;
+      if (user.chatUsers instanceof Array) {
+        newUsers = await User.findAll({
+          where: {
+            id: { [Op.notIn]: [req.userId, ...user.chatUsers] },
+          },
+        });
+      } else {
+        newUsers = await User.findAll({
+          where: {
+            id: { [Op.notIn]: [req.userId] },
+          },
+        });
+      }
+
+      console.log(`newUsers`, newUsers);
+
+      res.status(200).send(newUsers);
+    }
+  } catch (error) {
+    console.log(`error`, error);
+    res.status(400).send("Something is wrong!");
+  }
+};
+
+exports.createNewChat = async (req, res) => {
+  try {
+    const chatInfo = await ChatInfo.findOne({
+      where: {
+        [Op.or]: [
+          {
+            [Op.and]: { user1: req.userId, user2: parseInt(req.params.id, 10) },
+          },
+          {
+            [Op.and]: { user2: req.userId, user1: parseInt(req.params.id, 10) },
+          },
+        ],
+      },
+    });
+
+    if (!chatInfo) {
+      const uid = new ShortUniqueId({ length: 6 });
+
+      await ChatInfo.create({
+        user1: req.userId,
+        user2: parseInt(req.params.id, 10),
+        chatId: uid(),
+      });
+
+      const user1 = await User.findOne({ where: { id: req.userId } });
+      const user2 = await User.findOne({
+        where: { id: parseInt(req.params.id, 10) },
+      });
+
+      let user1ChatUsers = [];
+      let user2ChatUsers = [];
+
+      if (user1) {
+        user1ChatUsers = user1.chatUsers
+          ? [...user1.chatUsers, parseInt(req.params.id, 10)]
+          : [parseInt(req.params.id, 10)];
+      }
+
+      if (user2) {
+        user2ChatUsers = user2.chatUsers
+          ? [...user2.chatUsers, req.userId]
+          : [req.userId];
+      }
+
+      await User.update(
+        { chatUsers: user1ChatUsers },
+        {
+          where: {
+            id: req.userId,
+          },
+        }
+      );
+
+      await User.update(
+        { chatUsers: user2ChatUsers },
+        {
+          where: {
+            id: parseInt(req.params.id, 10),
+          },
+        }
+      );
+    }
+    res.status(200).send("Ok");
+  } catch (error) {
+    console.log(`error`, error);
+    res.status(400).send("Something is wrong!");
+  }
+};
+
+exports.getChatUsers = async (req, res) => {
+  try {
+    const currentUser = await User.findOne({
+      where: {
+        id: req.userId,
+      },
+    });
+
+    let usersIds = currentUser.chatUsers;
+
+    if (!usersIds) {
+      usersIds = [];
+    }
+
+    const chatUsers = await User.findAll({
+      where: { id: { [Op.in]: usersIds } },
+    });
+
+    res.status(200).send(chatUsers);
   } catch (error) {
     console.log(`error`, error);
     res.status(400).send("Something is wrong!");
