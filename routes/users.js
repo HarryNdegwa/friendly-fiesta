@@ -5,6 +5,7 @@ const {
   getNewChatUsers,
   createNewChat,
   getChatUsers,
+  me,
 } = require("../controllers/users");
 const verifyToken = require("../middlewares/verifyToken");
 
@@ -16,6 +17,10 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   await login(req, res);
+});
+
+router.get("/me", [verifyToken], async (req, res) => {
+  await me(req, res);
 });
 
 router.get("/get-new-chat-users", [verifyToken], async (req, res) => {

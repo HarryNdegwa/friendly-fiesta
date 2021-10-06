@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       username: { type: DataTypes.STRING, unique: true },
       password: DataTypes.STRING,
       chatUsers: {
-        type: DataTypes.ARRAY(DataTypes.INTEGER),
+        type: DataTypes.ARRAY(DataTypes.JSON),
       },
     },
     {

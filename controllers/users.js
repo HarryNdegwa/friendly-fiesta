@@ -77,7 +77,9 @@ exports.getNewChatUsers = async (req, res) => {
       if (user.chatUsers instanceof Array) {
         newUsers = await User.findAll({
           where: {
-            id: { [Op.notIn]: [req.userId, ...user.chatUsers] },
+            id: {
+              [Op.notIn]: [req.userId, ...user.chatUsers.map((u) => u.userId)],
+            },
           },
         });
       } else {
@@ -88,10 +90,21 @@ exports.getNewChatUsers = async (req, res) => {
         });
       }
 
-      console.log(`newUsers`, newUsers);
-
       res.status(200).send(newUsers);
     }
+  } catch (error) {
+    console.log(`error`, error);
+    res.status(400).send("Something is wrong!");
+  }
+};
+exports.me = async (req, res) => {
+  try {
+    const me = await User.findOne({
+      where: {
+        id: req.userId,
+      },
+    });
+    res.status(200).send(me);
   } catch (error) {
     console.log(`error`, error);
     res.status(400).send("Something is wrong!");
@@ -116,7 +129,7 @@ exports.createNewChat = async (req, res) => {
     if (!chatInfo) {
       const uid = new ShortUniqueId({ length: 6 });
 
-      await ChatInfo.create({
+      const chatMetaInfo = await ChatInfo.create({
         user1: req.userId,
         user2: parseInt(req.params.id, 10),
         chatId: uid(),
@@ -132,14 +145,28 @@ exports.createNewChat = async (req, res) => {
 
       if (user1) {
         user1ChatUsers = user1.chatUsers
-          ? [...user1.chatUsers, parseInt(req.params.id, 10)]
-          : [parseInt(req.params.id, 10)];
+          ? [
+              ...user1.chatUsers,
+              {
+                userId: parseInt(req.params.id, 10),
+                chatId: chatMetaInfo.chatId,
+              },
+            ]
+          : [
+              {
+                userId: parseInt(req.params.id, 10),
+                chatId: chatMetaInfo.chatId,
+              },
+            ];
       }
 
       if (user2) {
         user2ChatUsers = user2.chatUsers
-          ? [...user2.chatUsers, req.userId]
-          : [req.userId];
+          ? [
+              ...user2.chatUsers,
+              { userId: req.userId, chatId: chatMetaInfo.chatId },
+            ]
+          : [{ userId: req.userId, chatId: chatMetaInfo.chatId }];
       }
 
       await User.update(
@@ -160,7 +187,12 @@ exports.createNewChat = async (req, res) => {
         }
       );
     }
-    res.status(200).send("Ok");
+
+    const outputUser = await User.findOne({
+      where: { id: parseInt(req.params.id, 10) },
+    });
+
+    res.status(200).send(outputUser);
   } catch (error) {
     console.log(`error`, error);
     res.status(400).send("Something is wrong!");
@@ -175,7 +207,10 @@ exports.getChatUsers = async (req, res) => {
       },
     });
 
-    let usersIds = currentUser.chatUsers;
+    let usersIds;
+    if (currentUser.chatUsers instanceof Array) {
+      usersIds = currentUser.chatUsers.map((u) => u.userId);
+    }
 
     if (!usersIds) {
       usersIds = [];
@@ -183,6 +218,7 @@ exports.getChatUsers = async (req, res) => {
 
     const chatUsers = await User.findAll({
       where: { id: { [Op.in]: usersIds } },
+      order: [["updatedAt", "DESC"]],
     });
 
     res.status(200).send(chatUsers);
